@@ -2,7 +2,10 @@
 ### Overview
 The OBC0 is based on a Arm Cortex M4 and uses a
 [STM32 Nucleo-F446RE](https://www.digikey.ca/en/products/detail/stmicroelectronics/NUCLEO-F446RE/5347712)
-development board. The documentation for the Nucleo board is [here]().
+development board. The documentation for the Nucleo board is [here](). This
+Nucleo board wasn't chosen for a specific reason, and it is possible in future
+we will switch a different one. The Nucleo development board family was selected
+for ease of development and having a built in ST-Link programmer.
 
 ### Directory Structure
 
