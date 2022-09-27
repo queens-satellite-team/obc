@@ -27,3 +27,5 @@ To get the `stm32f4xx_hal_i2c` driver to compile, it was necessary to define
 a `HAL_I2C_WRONG_START` variable which was set arbitrarily to 0. This seems to
 be a known [issue](https://github.com/STMicroelectronics/STM32CubeG4/issues/8)
 with the library.
+
+this is a test change!
