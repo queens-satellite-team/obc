@@ -5,6 +5,14 @@
 # this is ~only~ a syntax refresher, not a guide to everything your class needs
 
 class EXAMPLE:
+    """EXAMPLE is to help understand how to build a class and it's methods.
+
+        Attributes/Fields:
+            attribute1 (type): description
+            attribute2 (type): description
+            attribute3 (int): number to show not all attributes need to be assigned from a constructor parameter
+
+    """
 
     # initialization method (like a constructor)
     def __init__(self, param1, param2):
