@@ -12,13 +12,11 @@ Call these once an interrupt has occurred (no interrupt checking here)
 def ground_isr():
     # Receive MCC command
 
-    # transmit telemetry - send data from microSD and send to comms
+    # transmit telemetry - send data from microSD and send to comms - method for this being developed in comms class (just pass it what needs to be sent)
 
     # execute commands
 
     # load new schedule
-
-    # send command to COMMS subsystem to clear the interrupt source
 
     return
 

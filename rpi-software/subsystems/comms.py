@@ -1,5 +1,7 @@
 """COMMS class will contain methods to handle r/s from the comms subsystem
 
+Will be fairly hardware involved.
+
 Lines to comms:
 
 COMM_C_TS = clear to send (says whether or not the comms board is ready to receive something)
@@ -15,8 +17,8 @@ To do:
 -request command code
 -tell comms about a fault
 
-"""
 
+"""
 
 class COMMS:
     """ r = method is recieving something
@@ -29,7 +31,7 @@ class COMMS:
         """not sure if this needs to be a class"""
         pass
 
-    def r_get_clearTS(self):
+    def r_get_clearTS(self) -> None:
         """
         1. Recieves the signal from comms COMM_C_TS line indicating if they are ready for data
 
@@ -38,7 +40,7 @@ class COMMS:
         """
         pass
 
-    def r_get_requestTS(self):
+    def r_get_requestTS(self) -> None:
         """
         1. Recieves request for data from comms on the COMM_R_TS line
         
@@ -48,7 +50,7 @@ class COMMS:
         """
         pass
 
-    def s_transmit_data(self, data=None):
+    def s_transmit_data(self, data=None) -> None:
         """
         1. check clear_to_send
 
@@ -63,7 +65,7 @@ class COMMS:
         """
         pass
 
-    def s_receive_data(self):
+    def s_receive_data(self) -> None:
         """
         1. Gets data from COMMS COMM_R_XD line
 
