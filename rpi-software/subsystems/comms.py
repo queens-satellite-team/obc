@@ -65,7 +65,7 @@ class COMMS:
         """
         pass
 
-    def s_receive_data(self) -> None:
+    def r_receive_data(self) -> None:
         """
         1. Gets data from COMMS COMM_R_XD line
 
