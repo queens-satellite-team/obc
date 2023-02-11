@@ -32,23 +32,27 @@ class COMMS:
         s = method is sending something
     """
 
+    pi = pigpio.pi()
+    h = pi.i2c_open(1, 0x53) # handle = (bus_no, target_address)
     clear_to_send = None    # True if comms is ready to recieve, false otherwise
+
+    # These methods will either be written in or imported from another file
+    def get_telemetry(): pass
+    def get_photo(): pass
+    def get_shutdown_command(): pass
+
+    # dictionary which calls commands to get certain data
+    # Note: these methods are not the actual methods we will use (placeholders for now)
+    get_data = {
+        0x0 : get_telemetry(),
+        0x1 : get_photo(),
+        0x10 : get_shutdown_command()
+    }
+
 
     def __init__(self):
         """not sure if this needs to be a class"""
         pass
-
-    # taken from https://www.electronicwings.com/raspberry-pi/raspberry-pi-uart-communication-using-python-and-c
-    def setup(self):
-        ser = serial.Serial ("/dev/serial0", 9600)    # Open port with baud rate
-        while True: 
-            received_data = ser.read()              # read serial port
-            sleep(0.03)
-            data_left = ser.inWaiting()             # check for remaining byte
-            received_data += ser.read(data_left)
-            print (received_data)                   # print received data
-
-            ser.write(received_data)                # transmit data serially 
 
     def r_get_clearTS(self) -> None:
         """
@@ -67,7 +71,12 @@ class COMMS:
 
         3. Call s_transmit_data to send back the requested data
         """
-        pass
+        COMM_R_TS = 1   # read signal from request line (1 is a placeholder here)
+
+        # receive request from comms
+        if COMM_R_TS != None:
+            data = self.get_data[COMM_R_TS] # get the data
+            self.s_transmit_data(data)      # send back the requested data
 
     def s_transmit_data(self, data=None) -> None:
         """
@@ -101,7 +110,7 @@ class COMMS:
 # I've written the details of the most useful functions (imo) below w little examples
 
 if __name__ == "__main__":
-    pi = pigpio.pi()   # accesses 
+    pi = pigpio.pi()
 
     # SMBus is a python module which makes it super easy to write data on the 12C bus
     # h = handle (identifier for the device we are connecting to)
@@ -113,27 +122,6 @@ if __name__ == "__main__":
     pi.i2c_write_block_data(h, 5, b'hi')   # (handle, register, bytes to write)
 
     print(data)
-
-    # ******************** serial *******************
-
-    # ser = serial.Serial ("/dev/serial0", 9600)    # Open port with baud rate
-    # while True: 
-    #     received_data = ser.read()              # read serial port
-    #     sleep(0.03)
-    #     data_left = ser.inWaiting()             # check for remaining byte
-    #     received_data += ser.read(data_left)
-    #     print (received_data)                   # print received data
-    #     ser.write(received_data)    
-    # sets up a pin to use serial (bit by bit communication)
-    # status = pi.bb_serial_read_open(4, 1920) # (pin_no, baud_rate)
-
-    # status = pi.serial_open()
-
-    # # reading data off the pin
-    # (count, data) = pi.bb_serial_read(4) # (pin_no)
-
-    # # writing data to the pin
-    # pi.serial_open(4, )
 
     
     # pi.read()
@@ -148,9 +136,6 @@ if __name__ == "__main__":
 
     # returns : [num bytes returned, bytearray containing bytes]
     
-    # """
-
-
     # (count, data) = pi.custom_2()
     # """callback(user_gpio, edge, func):
     # calls a user supplied function (a callback) whenever the specified GPIO edge is detected
