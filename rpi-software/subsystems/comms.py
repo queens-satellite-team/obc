@@ -55,6 +55,9 @@ class COMMS:
         2. Store result in global var.
         
         """
+        if COMM_C_TS:
+            clear_to_send = True
+        
         pass
 
     def r_get_requestTS(self) -> None:
@@ -88,7 +91,13 @@ class COMMS:
         Args:
             data: the data to be transmitted to comms
         """
+<<<<<<< HEAD
 
+=======
+        if clear_to_send:
+            
+        
+>>>>>>> 431f39b99414718c743879ef11eac43508de49d6
         pass
 
     def r_receive_data(self) -> None:
