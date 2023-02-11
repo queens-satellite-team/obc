@@ -6,7 +6,7 @@ Lines to comms:
 
 COMM_C_TS = clear to send (says whether or not the comms board is ready to receive something)
 
-COMM_R_TS = request to send (requesting info from obc to be send to comms)
+COMM_R_TS = request to send (comms is requesting info from obc)
 
 COMM_T_XD = COMMS-DB (comms transmiter data line)
 
@@ -19,6 +19,13 @@ To do:
 
 
 """
+# from RPi import GPIO
+
+import serial
+from time import sleep
+
+import pigpio
+# import gpiozero # this is built on pigpio and RPi.GPIO, useful only if we need their pre-created methods
 
 class COMMS:
     """ r = method is recieving something
@@ -31,10 +38,22 @@ class COMMS:
         """not sure if this needs to be a class"""
         pass
 
+    # taken from https://www.electronicwings.com/raspberry-pi/raspberry-pi-uart-communication-using-python-and-c
+    def setup(self):
+        ser = serial.Serial ("/dev/serial0", 9600)    # Open port with baud rate
+        while True: 
+            received_data = ser.read()              # read serial port
+            sleep(0.03)
+            data_left = ser.inWaiting()             # check for remaining byte
+            received_data += ser.read(data_left)
+            print (received_data)                   # print received data
+
+            ser.write(received_data)                # transmit data serially 
+
     def r_get_clearTS(self) -> None:
         """
         1. Recieves the signal from comms COMM_C_TS line indicating if they are ready for data
-
+        
         2. Store result in global var.
         
         """
@@ -43,8 +62,8 @@ class COMMS:
     def r_get_requestTS(self) -> None:
         """
         1. Recieves request for data from comms on the COMM_R_TS line
-        
-        2. Get that data
+
+        2. Get that data - telemetry, photos*, shutdown/restart command
 
         3. Call s_transmit_data to send back the requested data
         """
@@ -56,7 +75,7 @@ class COMMS:
 
         2. If we're clear, get data from microSD (possibly format it)
         
-        3. Send that data to COMMS over the COMM_T_XD line
+        3. Send that data to COMMS over the COMM_R_XD line
 
         Use case: (called in a fault ISR to send fault info to comms)
         
@@ -67,7 +86,7 @@ class COMMS:
 
     def r_receive_data(self) -> None:
         """
-        1. Gets data from COMMS COMM_R_XD line
+        1. Gets data from COMMS COMM_T_XD line
 
         2. If it's telemetry, check for microSD space, then store on microSD
 
@@ -76,5 +95,73 @@ class COMMS:
         """
         pass
 
+# this site contains info on the pigpio library, seems very useful
+# https://abyz.me.uk/rpi/pigpio/python.html#custom_1
 
+# I've written the details of the most useful functions (imo) below w little examples
+
+if __name__ == "__main__":
+    pi = pigpio.pi()   # accesses 
+
+    # SMBus is a python module which makes it super easy to write data on the 12C bus
+    # h = handle (identifier for the device we are connecting to)
+
+    h = pi.i2c_open(1, 0x53) #(bus_no, target_address)
+    
+    (count, data) = pi.i2c_read_block_data(h, 10)
+
+    pi.i2c_write_block_data(h, 5, b'hi')   # (handle, register, bytes to write)
+
+    print(data)
+
+    # ******************** serial *******************
+
+    # ser = serial.Serial ("/dev/serial0", 9600)    # Open port with baud rate
+    # while True: 
+    #     received_data = ser.read()              # read serial port
+    #     sleep(0.03)
+    #     data_left = ser.inWaiting()             # check for remaining byte
+    #     received_data += ser.read(data_left)
+    #     print (received_data)                   # print received data
+    #     ser.write(received_data)    
+    # sets up a pin to use serial (bit by bit communication)
+    # status = pi.bb_serial_read_open(4, 1920) # (pin_no, baud_rate)
+
+    # status = pi.serial_open()
+
+    # # reading data off the pin
+    # (count, data) = pi.bb_serial_read(4) # (pin_no)
+
+    # # writing data to the pin
+    # pi.serial_open(4, )
+
+    
+    # pi.read()
+    # pi.write(4, 0)  # 4 = address/pin no, 0 = state written
+    
+    # """custom_2(arg1, argx, retMax):
+    # calls a pigpio function customised by the user
+
+    # arg1 : default 0
+    # argx : extra arguments (each 0-255), default empty)
+    # retMax : max number of bytes to return, default 8192
+
+    # returns : [num bytes returned, bytearray containing bytes]
+    
+    # """
+
+
+    # (count, data) = pi.custom_2()
+    # """callback(user_gpio, edge, func):
+    # calls a user supplied function (a callback) whenever the specified GPIO edge is detected
+
+    # user_gpio: 0-31
+    # edge : EITHER_EDGE, RISING_EDGE (default), FALLING_EDGE
+    # func : user supplied callback function
+    
+    # """
+    # def cbf(gpio, level, tick):
+    #     print(gpio, level, tick)
+
+    # cb1 = pi.callback(22, pigpio.EITHER_EDGE, cbf)
 
