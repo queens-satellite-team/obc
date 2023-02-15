@@ -91,13 +91,6 @@ class COMMS:
         Args:
             data: the data to be transmitted to comms
         """
-<<<<<<< HEAD
-
-=======
-        if clear_to_send:
-            
-        
->>>>>>> 431f39b99414718c743879ef11eac43508de49d6
         pass
 
     def r_receive_data(self) -> None:
@@ -117,14 +110,25 @@ if __name__ == "__main__":
     # runs in the raspberry pi :)
 
     pi = pigpio.pi()
-    h = pi.i2c_open(1, 0x0C) # handle = (bus_no, target_address)
 
-    # throws an error (because we weren't connected) :(
+    # ------------------- I2C communication code --------------------
+    try:
+        h = pi.i2c_open(1, 0x0C) # handle = (bus_no, target_address)
+    except:
+        print("Handle opening failed")
 
-    (count, data) = pi.i2c_read_block_data(h, 10)   # (handle, register)
-    pi.i2c_write_block_data(h, 5, b'hi')   # (handle, register, bytes to write)
+    try:
+        pi.i2c_write_block_data(h, 2, '3')
+    except:
+        print("Register write failed")
+
+    try:
+        (count, data) = pi.i2c_read_block_data(h, 10)
+    except:
+        print("Register read failed")
 
     # pi.read()
     # pi.write(4, 0)  # 4 = address/pin no, 0 = state written
 
-
+    # ------------------- SERIAL TTL communication code -----------------
+    
