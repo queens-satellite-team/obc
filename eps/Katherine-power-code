@@ -1,0 +1,62 @@
+#Main goal: acquire status data from EPS and send commands to turn off/on selected systems.
+#relying on specific library for I2C design 
+#by kath - apologies for errors
+
+def errorcheck():
+{	
+    bus.write_byte(0x2B,0,0x03); #find out details of last error
+    bus.write_byte(0x2B,0,zero);
+        
+    if bus == 0x10 #CRC code does not match
+        #solution?
+            
+    elif bus == 0x01 #unknown command received
+        #solution?
+            
+    elif bus == 0x02 #supplied data incorrect when processing command
+        #solution?
+            
+    elif bus == 0x03 #selected channel does not exist
+        #solution?
+            
+    elif bus == 0x04 #selected channel is inactive
+        #solution?
+            
+    elif bus == 0x13 #reset had to occur
+        #solution?
+            
+    elif bus == 0x14 #error with ADC acquisition
+        #solution?
+        #im guessing reset PDM for ADC specifically 
+            
+    elif bus == 0x20 #reading from EEPROM generated an error
+        #solution?
+        
+    elif bus == 0x30 #generic warning about error on internal SPI bus
+        #solution?
+        
+    else #should not return other command however if it does...
+        bus.write_byte(0x2B,0,0x80) #manual reset
+            
+    return
+}
+    
+
+from smbus2 import SMBus
+
+with SMBus(1) as bus:
+    zero = 0x00;
+    #write_byte(address,offset,data)?
+    #address of telemetry byte is 0x2B
+    #
+    bus.write_byte(0x2B,0,0x45); #command to set PDMs to initial states
+    bus.write_byte(0x2B,0,zero); #Data command - must be sent after write command
+    
+    if bus == 0xFFFF #command error has occurred if this is returned
+        errorcheck();
+    
+    bus.read_byte(0x2B,0,0x01); #get board status
+    bus.read_byte(0x2B,0,zero); #data command - ends the read command
+    
+    if bus == 0xFFFF #command error has occurred
+        errorcheck();
