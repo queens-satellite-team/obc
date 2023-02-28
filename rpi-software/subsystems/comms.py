@@ -130,5 +130,5 @@ if __name__ == "__main__":
     # pi.read()
     # pi.write(4, 0)  # 4 = address/pin no, 0 = state written
 
-    # ------------------- SERIAL TTL communication code -----------------
-    
+    # ----------------- SERIAL TTL communication code -----------------
+
