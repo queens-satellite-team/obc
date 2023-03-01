@@ -21,6 +21,7 @@ To do:
 """
 import serial
 from time import sleep
+from events import eventmanager
 
 import pigpio
 
@@ -31,10 +32,11 @@ class COMMS:
 
     clear_to_send = None    # True if comms is ready to recieve, false otherwise
 
-    # These methods will either be written in or imported from another file
+    # Dummy methods - will either be written in or imported from another file
     def get_telemetry(): pass
     def get_photo(): pass
     def get_shutdown_command(): pass
+    def is_msd_space(): pass
 
     # dictionary which calls commands to get certain data
     # Note: these methods are not the actual methods we will use (placeholders for now)
@@ -70,7 +72,7 @@ class COMMS:
 
         """
 
-        COMM_R_TS = 1   # read signal from request line (1 is a placeholder here)
+        COMM_R_TS = 1   # read signal from request line: placeholder ** need to fill in with actual line reading **
 
         # receive request from comms
         if COMM_R_TS != None:
@@ -91,6 +93,14 @@ class COMMS:
         Args:
             data: the data to be transmitted to comms
         """
+
+        self.r_get_clearTS  # get current clear to send status
+
+        if self.clear_to_send:  # while we are clear to send data to COMMs
+            # transmit data over COMM_R_XD line through ~serial communication~
+            pass
+
+        
         pass
 
     def r_receive_data(self) -> None:
@@ -102,6 +112,18 @@ class COMMS:
         3. If not telem, then it's a command, so call eventmanager (?)
         
         """
+
+        COMM_T_XD = 111   # placeholder for data ** need to fill in with actual line reading **
+
+        # assumes a convention that the first bit will be an indicator of the type of data (telem = 0, command = 1)
+
+        if COMM_T_XD[0] == '0' and self.is_msd_space():     # if the data is telemetry and we have space, store it
+            # store on the microSD
+            pass
+
+        if COMM_T_XD[0] == '1':
+            eventmanager.dispatch_table[COMM_T_XD]          # if the data is a command, call corresponding process from eventmanager
+
         pass
 
 
