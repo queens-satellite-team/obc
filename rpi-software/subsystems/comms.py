@@ -29,6 +29,7 @@ class COMMS:
     """ r = method is recieving something
         s = method is sending something
     """
+    ser = serial.Serial()   # get Serial instance (configure later)
 
     clear_to_send = None    # True if comms is ready to recieve, false otherwise
 
@@ -37,6 +38,7 @@ class COMMS:
     def get_photo(): pass
     def get_shutdown_command(): pass
     def is_msd_space(): pass
+    def store_on_msd(): pass
 
     # dictionary which calls commands to get certain data
     # Note: these methods are not the actual methods we will use (placeholders for now)
@@ -57,6 +59,12 @@ class COMMS:
         2. Store result in global var.
         
         """
+        # ------ serial communication ------
+        # ser.port = 'COMM_C_TS'        # configure the serial device to look at clear to send line
+        # COMM_C_TS = ser.read()        # read the data from the port and store in the global var
+
+        COMM_C_TS = True    # dummy status
+
         if COMM_C_TS:
             clear_to_send = True
         
@@ -72,7 +80,12 @@ class COMMS:
 
         """
 
-        COMM_R_TS = 1   # read signal from request line: placeholder ** need to fill in with actual line reading **
+        # ------ serial communication ------
+        # ser.port = 'COMM_R_TS'        # configure the serial device to look at request to send line
+        # COMM_R_TS = ser.read()        # read data signal from request line
+
+
+        COMM_R_TS = 1   # dummy data
 
         # receive request from comms
         if COMM_R_TS != None:
@@ -83,12 +96,9 @@ class COMMS:
         """
         1. check clear_to_send
         
-        2. Send that data to COMMS over the COMM_R_XD line through **serial communcation**
+        2. Send that data to COMMS over the COMM_R_XD line through serial communication
 
         Use case: (called in a fault ISR to send fault info to comms)
-
-        Serial communication arduino video:
-        https://www.youtube.com/watch?v=6IAkYpmA1DQ
         
         Args:
             data: the data to be transmitted to comms
@@ -97,7 +107,10 @@ class COMMS:
         self.r_get_clearTS  # get current clear to send status
 
         if self.clear_to_send:  # while we are clear to send data to COMMs
-            # transmit data over COMM_R_XD line through ~serial communication~
+
+            # ------ serial communication ------
+            # ser.port = 'COMM_R_XD'
+            # ser.write(data)s
             pass
 
         
@@ -113,13 +126,16 @@ class COMMS:
         
         """
 
-        COMM_T_XD = 111   # placeholder for data ** need to fill in with actual line reading **
+        # ------ serial communication ------
+        # ser.port = 'COMM_T_XD'
+        # COMM_T_XD = user.read(10)     # read up to 10 bytes
+
+        COMM_T_XD = 111   # dummy data
 
         # assumes a convention that the first bit will be an indicator of the type of data (telem = 0, command = 1)
 
         if COMM_T_XD[0] == '0' and self.is_msd_space():     # if the data is telemetry and we have space, store it
-            # store on the microSD
-            pass
+            self.store_on_msd()
 
         if COMM_T_XD[0] == '1':
             eventmanager.dispatch_table[COMM_T_XD]          # if the data is a command, call corresponding process from eventmanager
@@ -151,6 +167,3 @@ if __name__ == "__main__":
 
     # pi.read()
     # pi.write(4, 0)  # 4 = address/pin no, 0 = state written
-
-    # ----------------- SERIAL TTL communication code -----------------
-
