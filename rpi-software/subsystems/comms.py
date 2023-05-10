@@ -12,11 +12,13 @@ COMM_T_XD = COMMS-DB (comms transmiter data line)
 
 COMM_R_XD = COMMS-DB (comms reciever data line)
 
+----------- this is untested functionality ----------------
+----------- just thought I'd push to the repo so everyone can see progress ----------------
+
 
 To do:
 -request command code
 -tell comms about a fault
-
 
 """
 import serial
@@ -67,6 +69,8 @@ class COMMS:
 
         if COMM_C_TS:
             clear_to_send = True
+        else:
+            clear_to_send = False
         
         pass
 
