@@ -1,0 +1,15 @@
+#File for defining the functionality of the OBC_Contoller class
+rtc:
+    battery_state:  1
+    clock_state:  1
+    i2c_status:  0
+    datetime: "2023-2-5-0-15-34"
+
+temperature_sensor:
+    i2c_status: 0
+    critical_temperature: 0
+    lower_temperature: -5
+    upper_temperature: 40
+
+adcs:
+  address: 0x15
