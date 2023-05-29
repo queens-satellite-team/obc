@@ -1,5 +1,5 @@
 import yaml
-from Real_Time_Clock.rtc import RTC 
+from Real_Time_Clock.rtc import RTC
 from Temperature_Sensor.temperature_sensor import Temperature_Sensor
 import argparse
 from STM32.stm32 import STM32
@@ -7,9 +7,9 @@ from Comms.comms import Comms
 
 class OBC_Controller:
     """This is a class to contain various fucntions and operations of the on board controller. This class is meant to be used through a CLI.
-        
+
         Functionality:
-            1) Yaml file configurability 
+            1) Yaml file configurability
             2) Aquire telemetry from multiple devices
     """
     config_path =  "controller_config.yml"
@@ -61,7 +61,7 @@ class OBC_Controller:
     @staticmethod
     def get_telemetry():
         temp_interface = Temperature_Sensor()
-        rtc_interface = RTC() 
+        rtc_interface = RTC()
         comms_interface = Comms(OBC_Controller.config_path)
         led_state = comms_interface.led_state()
 
@@ -75,7 +75,7 @@ class OBC_Controller:
             parser.error("Reaction Wheels must have a set power of 0 or 1")
         elif args.power == 'on':
             power_bit = 1
-        else: 
+        else:
             power_bit = 0
 
         if args.speed is not None:
@@ -89,13 +89,13 @@ class OBC_Controller:
             rotation_bit = 1
         else:
             parser.error("Reaction Wheels must have a set rotation direction")
-        
+
         data = power_bit + (speed_bit <<1) + (rotation_bit<<3)
         adcs_board = STM32(OBC_Controller.get_config()["adcs"]["address"])
-        adcs_board.transmit([data])
+        adcs_board.transmit([hex(data)])
         ret = adcs_board.receive(5)
         print(ret)
-        
+
 
 if __name__  == '__main__':
     FUNCTION_MAP =  {
